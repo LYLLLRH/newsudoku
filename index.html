@@ -48,9 +48,6 @@
         for (var i=0;i<81;i++) {
 
             $("#"+i +" >i").addClass("singlenumber");
-
-
-
             if (i!==0 && (i+1)%3==0 && (i+1)%9!==0) {
                 $("#"+i).css("border-right","solid 1px blue");
             } 
@@ -68,7 +65,7 @@
 
 	// var sudoku = new Sudoku('851200093030008200940631750000000860620000407000070001090400070214060905360805100'); //Easy 
 	// var sudoku = new Sudoku('070000160000030800024650900600000301050048020207109005300020007490705000000080000');  //Medium
-	var sudoku = new Sudoku('004009807006010400820003160000408005030000000090021000009032081000090003000600000'); //Hard
+	// var sudoku = new Sudoku('004009807006010400820003160000408005030000000090021000009032081000090003000600000'); //Hard
 
     // var sudoku = new Sudoku('005000701000070400006000008401253800008761045560894010059027180010000629080009000');
    // var sudoku = new Sudoku('000000000810009000005103002900001040007000300140002798008310000530094007400080003');
@@ -78,27 +75,58 @@
          // var sudoku = new Sudoku('912000000538670000764900000070400062000057100000030000293700001657100009001092070');
          // var sudoku = new Sudoku('003005000010007503090043008780954300900370080030680759100738925309506840000409630');
          // var sudoku = new Sudoku('064290800001048290892017400200001000915004720048020000420106530050009102180002000');
+         // var sudoku= new Sudoku('600000090900280030000000007015090004200060008300050710500000000040079001020000003');
+ 	// var sudoku = new Sudoku('090000500001406007840000000059000000400703001070000820000000006700501900004000030');
+ 	var sudoku = new Sudoku('000060000500002800000390420802600090300080501000100000201000000070021000008400000')
+ 	var sudoku = new Sudoku('700020000050910700008600000076000900100000004090500000500000030024001506010008000')
+ 	var sudoku = new Sudoku('000007001000023900020400500000600080700000005209004010030000000080200000600800374')
+ 	var sudoku = new Sudoku('000017080500400000000009030051020000070006000042300006010070540060090001000000309')
+ 	var sudoku = new Sudoku('000060800083000000009000006050380700000000602000000080090710000500830049000400020')
+ 	var sudoku = new Sudoku('000640000290000400000000573004207000000810006030009000800000000610070000020000137') // 未解决
+ 	// var sudoku = new Sudoku('080009700002760050570010020001600000803000064020090000007040000408006305000001000')
+ 	var sudoku = new Sudoku('004000030270005000800700001180500900090301005000006000050200004406050087000000006')
+ 	var sudoku = new Sudoku('000300000800004760709200503010402000000005001005000409000000307100008000003100058')
+ 	var sudoku = new Sudoku('060100400900080000084000060039800000000003010400000200100570000700638001698000000')
+
+ 	//  大师
+ 	var sudoku = new Sudoku('600408700000500100005090004060030400439805000507002089080050600000000007042100000')
 	function displaySudoku (cells,debug) {
-	console.log('-----------------------------------------');
-	console.log(sudoku.cells[0]);
-	console.log(sudoku.cells[1]);
-	console.log(sudoku.cells[2]);
-	console.log(sudoku.cells[3]);
-	console.log(sudoku.cells[4]);
-	console.log(sudoku.cells[5]);
-	console.log(sudoku.cells[6]);
-	console.log(sudoku.cells[7]);
-	console.log(sudoku.cells[8]);
-		if( !debug) {return;}
-		for (var i=0;i<81;i++) {
-			if ($("#"+i+">i").text()!==cells[Math.floor(i/9)][i%9]) {
-				if (cells[Math.floor(i/9)][i%9].length===1) {
-		        	$("#"+i+">i").text(cells[Math.floor(i/9)][i%9]).removeClass("center").removeClass('multinumber').addClass('singlenumber');
-				} else {
-		        	$("#"+i+">i").text(cells[Math.floor(i/9)][i%9]).addClass("center").removeClass('singlenumber').addClass('multinumber');			
-				}
-			}	
+		console.log('-----------------------------------------');
+		console.log(sudoku.cells[0]);
+		console.log(sudoku.cells[1]);
+		console.log(sudoku.cells[2]);
+		console.log(sudoku.cells[3]);
+		console.log(sudoku.cells[4]);
+		console.log(sudoku.cells[5]);
+		console.log(sudoku.cells[6]);
+		console.log(sudoku.cells[7]);
+		console.log(sudoku.cells[8]);
+			if( !debug) {return;}
+			for (var i=0;i<81;i++) {
+				if ($("#"+i+">i").text()!==cells[Math.floor(i/9)][i%9]) {
+					if (cells[Math.floor(i/9)][i%9].length===1) {
+			        	$("#"+i+">i").text(cells[Math.floor(i/9)][i%9]).removeClass("center").removeClass('multinumber').addClass('singlenumber');
+					} else {
+			        	$("#"+i+">i").text(cells[Math.floor(i/9)][i%9]).addClass("center").removeClass('singlenumber').addClass('multinumber');			
+					}
+				}	
+			}
+	}
+
+	function cells2Str(cells,possiblity) {
+		var str = '';
+		for (var i=0;i<9;i++) {
+			for (var j=0;j<9;j++) {
+				// if (cells[i][j].length===1) {
+				// 	str+=cells[i][j]+':';
+				// } else {
+				// 	str+=;
+				// }
+				str += cells[i][j]+":";
+			}
 		}
+		return str.substr(0,str.length-1);
+		// body...
 	}
 
 	$("#possibility").on('click',function (e) {
@@ -143,6 +171,7 @@
 		}		
 				
 	}
+	//86707888
 
 	function displaySolutionInfo(solution) {
 		$("#solutioninfo").text("方法："+solution.method+";row:"+(solution.row+1)+";col:"+(solution.col+1)+";");
@@ -151,7 +180,7 @@
    var change = 0;
    var changeBlock = 0;
 
-	displaySudoku(sudoku.cells,1);
+	displaySudoku(sudoku.cells,0);
 	function clearAll() {	
 		do { 
 
@@ -169,6 +198,7 @@
 			console.log('Remove redundant number:'+change);				
 			} while (change>0);
 	
+			
 			change =0;
 			for( var i=0;i<9;i++) {
 
@@ -177,24 +207,83 @@
 					change += sudoku.reverse2Block(i);
 
 			}
+
+
 			displaySudoku(sudoku.cells,0);
 			console.log( "Double Number:"+ change );
 			changeBlock =0;
 			for (var i=0;i<9;i++) {
 				changeBlock += sudoku.reverseBlock(i);
+				// changeBlock += sudoku.reverseRow(i);
+				// changeBlock += sudoku.reverseCol(i);
 				// console.log(changeBlock);
 			}
 			displaySudoku(sudoku.cells,0);
 			console.log("Exclude number in block:"+changeBlock);
 			change += changeBlock;
+			for (var i=0;i<9;i++) {
+				changeBlock += sudoku.mulnumn_inarow(i);
+				changeBlock += sudoku.mulnumn_inacol(i);
+				// console.log(changeBlock);
+			}			
+
+
+			for( var i=0;i<9;i++) {
+
+					change += sudoku.reverse3Row(i);
+					change += sudoku.reverse3Col(i);
+					change += sudoku.reverse3Block(i);
+
+			}
 
 		} while (change>0);
+
+
+
+		sudoku.solution.push({
+	 					cellsStr: cells2Str(sudoku.cells),
+	 					method: 'Last',
+	 					row: 0,
+	 					col: 0,
+	 					num: '100'}
+		)	 
+
 
 	}
 
 
 
+	clearAll();
 
+	for (var i=0;i<9;i++) {
+		// changeBlock += sudoku.reverseBlock(i);
+		changeBlock += sudoku.reverseRow(i);
+		changeBlock += sudoku.reverseCol(i);
+		// console.log(changeBlock);
+	}
+
+	clearAll();
+	// sudoku.mulnumn_inacol(3);
+
+	// sudoku.solution.push({
+	// 	cellsStr: cells2Str(sudoku.cells),
+	// 	method: 'Last',
+	// 	row: 0,
+	// 	col: 0,
+	// 	num: '100'}
+	// )	 
+
+	// clearAll();
+
+	// sudoku.mulnumn_inarow(8);
+
+	// sudoku.solution.push({
+	// 	cellsStr: cells2Str(sudoku.cells),
+	// 	method: 'Last',
+	// 	row: 0,
+	// 	col: 0,
+	// 	num: '100'}
+	// )	 
 
 	clearAll();
 
@@ -219,11 +308,6 @@
 		displaySudokuOneDimension(sudoku.solution[$(this).text()-1]);
 		displaySolutionInfo(sudoku.solution[$(this).text()-1]);
 	})
-
-
-
-
-	
 
 });
 
