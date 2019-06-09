@@ -20,6 +20,7 @@
 	<script>
 	$(document).ready(function () {
 	function initialDisplaySudoku(argument) {
+
        for (var i=0;i<81;i++) {
             $(".sdkrow").append('<li class="cell" id="'+i+'"'+'><i>'+i%9+'</i></li>');
         }
@@ -61,9 +62,10 @@
         // $("#66>i").text('1').removClass('multinumber').addClass('singlenumber');
     
 	}
-	 initialDisplaySudoku();
 
-	// var sudoku = new Sudoku('851200093030008200940631750000000860620000407000070001090400070214060905360805100'); //Easy 
+	initialDisplaySudoku();
+
+	var sudoku = new Sudoku('851200093030008200940631750000000860620000407000070001090400070214060905360805100'); //Easy 
 	// var sudoku = new Sudoku('070000160000030800024650900600000301050048020207109005300020007490705000000080000');  //Medium
 	// var sudoku = new Sudoku('004009807006010400820003160000408005030000000090021000009032081000090003000600000'); //Hard
 
@@ -77,40 +79,104 @@
          // var sudoku = new Sudoku('064290800001048290892017400200001000915004720048020000420106530050009102180002000');
          // var sudoku= new Sudoku('600000090900280030000000007015090004200060008300050710500000000040079001020000003');
  	// var sudoku = new Sudoku('090000500001406007840000000059000000400703001070000820000000006700501900004000030');
- 	var sudoku = new Sudoku('000060000500002800000390420802600090300080501000100000201000000070021000008400000')
- 	var sudoku = new Sudoku('700020000050910700008600000076000900100000004090500000500000030024001506010008000')
- 	var sudoku = new Sudoku('000007001000023900020400500000600080700000005209004010030000000080200000600800374')
- 	var sudoku = new Sudoku('000017080500400000000009030051020000070006000042300006010070540060090001000000309')
- 	var sudoku = new Sudoku('000060800083000000009000006050380700000000602000000080090710000500830049000400020')
- 	var sudoku = new Sudoku('000640000290000400000000573004207000000810006030009000800000000610070000020000137') // 未解决
- 	// var sudoku = new Sudoku('080009700002760050570010020001600000803000064020090000007040000408006305000001000')
- 	var sudoku = new Sudoku('004000030270005000800700001180500900090301005000006000050200004406050087000000006')
- 	var sudoku = new Sudoku('000300000800004760709200503010402000000005001005000409000000307100008000003100058')
- 	var sudoku = new Sudoku('060100400900080000084000060039800000000003010400000200100570000700638001698000000')
+ 	// var sudoku = new Sudoku('000060000500002800000390420802600090300080501000100000201000000070021000008400000')
+ 	// var sudoku = new Sudoku('700020000050910700008600000076000900100000004090500000500000030024001506010008000')
+ 	// var sudoku = new Sudoku('000007001000023900020400500000600080700000005209004010030000000080200000600800374')
+ 	// var sudoku = new Sudoku('000017080500400000000009030051020000070006000042300006010070540060090001000000309')
+ 	// var sudoku = new Sudoku('000060800083000000009000006050380700000000602000000080090710000500830049000400020')
+ 	// var sudoku = new Sudoku('000640000290000400000000573004207000000810006030009000800000000610070000020000137') // 未解决
+ 	// var sudoku = new Sudoku('000640000290000400000000573004207000050810006030009000800000000610070000020000137') // 未解决
 
+ 	// var sudoku = new Sudoku('080009700002760050570010020001600000803000064020090000007040000408006305000001000')
+ 	// var sudoku = new Sudoku('004000030270005000800700001180500900090301005000006000050200004406050087000000006')
+ 	// var sudoku = new Sudoku('000300000800004760709200503010402000000005001005000409000000307100008000003100058')
+ 	// var sudoku = new Sudoku('060100400900080000084000060039800000000003010400000200100570000700638001698000000')
+
+ 	// var sudoku = new Sudoku('010050280030060000002300004005900010200000009070006400500004300000010040043070050')
+
+ 	// var sudoku = new Sudoku('070250400800000903000003070700004020100000007040500008090600000401000005007082030')
  	//  大师
- 	var sudoku = new Sudoku('600408700000500100005090004060030400439805000507002089080050600000000007042100000')
+ // 	var sudoku = new Sudoku('000000000030104006007050032009215000100000007000900000305002800800000960071800000');
+	// var sudoku = new Sudoku('000006500030000904006200003401000000000000009083000007900020000078050002012704300');
+	// var sudoku = new Sudoku('003509008080724900500001000008007000300095060060203100000008007070052000801976042')
+	// var sudoku = new Sudoku('900306007000807009000000035200000004480003000035009020070000910006004050320001000')	
+	// var sudoku = new Sudoku('093000400000000030645703028062000050000602080900570000058300006306940000019000000')
+	// var sudoku = new Sudoku('007030040000700000003105006000001000038409200100000508001008070700000400040350000')
+	// var sudoku = new Sudoku('070000200005100030003000095000300060000021400010004000040070800006900000500000000')
+	// var sudoku = new Sudoku('070000200085100030003000095000300060000021400010004000040070800006900000500000000')  //上一题。测试Hiden Paire in block
+ 	//  大师
+ 	// var sudoku = new Sudoku('600408700000500100005090004060030400439805000507002089080050600000000007042100000')
+ 	// var sudoku = new Sudoku('000700000000090017867000409021065004040020000070000005290070008700000040305200901')
+ 	// var sudoku = new Sudoku('600408700000500100005090004060030400439805000507002089080050600000000007042100000')
+ 	// var sudoku = new Sudoku('600408700000500100005090004060030400439805000507002089080050600000000007042100000')
+ 	// var sudoku = new Sudoku('600408700000500100005090004060030400439805000507002089080050600000000007042100000')
+ 	// var sudoku = new Sudoku('000030097000900000029000610086004000000805000000700820014000230000007000560090000')
+ 	// var sudoku = new Sudoku('000702000000000000980000500010030800002600000090000000030050000000000075001000026')
+ 	// var sudoku = new Sudoku('090000800001307002630000000089000000356204701020000650000000007200801900003000040')
+ 	// var sudoku = new Sudoku('200001000056090040840000000002050001000200704405060200000800000600000095510040070')
+    // var sudoku = new Sudoku('901300020000700000306000740092040037007520000140907200200000476000671080000400003')
+    // var sudoku = new Sudoku('000902006301800000005006010423070500000009003007350000009000000504000020600000148')
+    // var sudoku = new Sudoku('809007000100000004205801060004100327902304001010060500090400050003000000500000008')
+    // var sudoku = new Sudoku('009380700200000060070020100006007091500400072000008600082040306000010000350000009')
+    // var sudoku = new Sudoku('809000000507610009000407000000000030132004608090180004050071000000200000020045100')
+    // var sudoku = new Sudoku('006100000400007100000090000805010060760500980009080005100540036004000050090300700')
+    // var sudoku = new Sudoku('200070600900000054085001907000290000000058006003400000060000700590002030107000000')
+    // var sudoku = new Sudoku('')
+    // var sudoku = new Sudoku('')    
+    // var sudoku = new Sudoku('')
+    // var sudoku = new Sudoku('')
+ 	//学成出师
+ // 	var sudoku = new Sudoku('076000200310002000000070008290016004000207000080000060035000040008503600000000030')
+ // 	var sudoku = new Sudoku('600000341000051000070009000002906000009005000000040086000020070000500100420018000')
+ // 	var sudoku = new Sudoku('050000000000000086007080040700938150005020600002150000000049063004070900930260000')
+ // 	var sudoku = new Sudoku('007000000816200300000360009100009500080000002004000006070000980030070024000001000')
+	// // var sudoku = new Sudoku('000500010000000000090040000006007000000020400001050000001068040090000020000070')
+ // 	var sudoku = new Sudoku('000500010000000000090040000006007000000020400001000050000001068040090000020000070')
+ // 	var sudoku = new Sudoku('002098000000004076006000083700901024859000000024860509000400310090100000031070000')
+ // 	var sudoku = new Sudoku('063194802200806030000300400408910006000608014316045000040500783001003000030000000')
+ // 	var sudoku = new Sudoku('000000530000530001060209040010000000903000100500001082630000900120006000000074000')
+ // 	var sudoku = new Sudoku('810002300370005009609080040067004918900000000400060002090000800142008000530900700')
+ // 	var sudoku = new Sudoku('004820900005903002290070600460010087000000000180090046006750000900100320000000069')
+ // 	var sudoku = new Sudoku('')
+ // 	var sudoku = new Sudoku('')
+ // 	var sudoku = new Sudoku('')
+ // 	var sudoku = new Sudoku('')
+  // 	var sudoku = new Sudoku('')
+ // 	var sudoku = new Sudoku('')
+ // 	var sudoku = new Sudoku('')
+  // 	var sudoku = new Sudoku('')
+ // 	var sudoku = new Sudoku('')
+ // 	var sudoku = new Sudoku('')
+
+ //  测试
+		// var sudoku = new Sudoku('000000000180720439000000000000200000000800000000500000000900000000100000000300000')			
+		// var sudoku = new Sudoku('400800060000070042000900500030006800000000000602408030340000620007000005050020070') // reserve2num
+		// var sudoku = new Sudoku('400800060000070042003900500030006800000000000602408030340000620007000005050020070') // reserve2num	
+		// var sudoku = new Sudoku('003600004504003000070200300000402908200000070000806000006008500702300046050000020')
+
+	// var sudoku = new Sudoku('240600001003000007000009020004735009000596205500841600080100000900000100100006054')
+	
 	function displaySudoku (cells,debug) {
-		console.log('-----------------------------------------');
-		console.log(sudoku.cells[0]);
-		console.log(sudoku.cells[1]);
-		console.log(sudoku.cells[2]);
-		console.log(sudoku.cells[3]);
-		console.log(sudoku.cells[4]);
-		console.log(sudoku.cells[5]);
-		console.log(sudoku.cells[6]);
-		console.log(sudoku.cells[7]);
-		console.log(sudoku.cells[8]);
-			if( !debug) {return;}
-			for (var i=0;i<81;i++) {
-				if ($("#"+i+">i").text()!==cells[Math.floor(i/9)][i%9]) {
-					if (cells[Math.floor(i/9)][i%9].length===1) {
-			        	$("#"+i+">i").text(cells[Math.floor(i/9)][i%9]).removeClass("center").removeClass('multinumber').addClass('singlenumber');
-					} else {
-			        	$("#"+i+">i").text(cells[Math.floor(i/9)][i%9]).addClass("center").removeClass('singlenumber').addClass('multinumber');			
-					}
-				}	
-			}
+		// console.log('-----------------------------------------');
+		// console.log(sudoku.cells[0]);
+		// console.log(sudoku.cells[1]);
+		// console.log(sudoku.cells[2]);
+		// console.log(sudoku.cells[3]);
+		// console.log(sudoku.cells[4]);
+		// console.log(sudoku.cells[5]);
+		// console.log(sudoku.cells[6]);
+		// console.log(sudoku.cells[7]);
+		// console.log(sudoku.cells[8]);
+		if( !debug) {return;}
+		for (var i=0;i<81;i++) {
+			if ($("#"+i+">i").text()!==cells[Math.floor(i/9)][i%9]) {
+				if (cells[Math.floor(i/9)][i%9].length===1) {
+		        	$("#"+i+">i").text(cells[Math.floor(i/9)][i%9]).removeClass("center").removeClass('multinumber').addClass('singlenumber');
+				} else {
+		        	$("#"+i+">i").text(cells[Math.floor(i/9)][i%9]).addClass("center").removeClass('singlenumber').addClass('multinumber');			
+				}
+			}	
+		}
 	}
 
 	function cells2Str(cells,possiblity) {
@@ -174,126 +240,183 @@
 	//86707888
 
 	function displaySolutionInfo(solution) {
-		$("#solutioninfo").text("方法："+solution.method+";row:"+(solution.row+1)+";col:"+(solution.col+1)+";");
+		$("#solutioninfo").text("方法："+solution.method+";row:"+(solution.row+1)+";col:"+(solution.col+1)+";num:"+solution.num);
 	}
    
    var change = 0;
    var changeBlock = 0;
 
-	displaySudoku(sudoku.cells,0);
-	function clearAll() {	
-		do { 
+	// displaySudoku(sudoku.cells,0);
+	// console.log('start'+sudoku.cells);
+	sudoku.solution.push({
+ 					cellsStr: cells2Str(sudoku.cells),
+ 					method: 'Origninal',
+ 					row: 0,
+ 					col: 0,
+ 					num: '0'}
+	)
 
 
+	function nakedOneClear() {  //baisc skill
+		do {
+			change = 0;
+			for( var i=0;i<9;i++) {
+				change += sudoku.clearRow(i);
+				change += sudoku.clearCol(i);
+				change += sudoku.clearBlk(i);
+			}				
+			console.log('Remove redundant number:'+change);
+		} while (change>0);	
+		sudoku.solution.push({
+		cellsStr: cells2Str(sudoku.cells),
+		method: 'Afetr NakeOne Round',
+		row: -1,
+		col: -1,
+		num: '0'}
+		)	
+
+	}
+
+	function hideOneClear() { // intermedia skill
+		do {
+			change= 0;
+			do {
+				change= 0;
+				for( var i=0;i<9;i++) {
+					change += sudoku.hideOneRow(i);
+					change += sudoku.hideOneCol(i);
+					change += sudoku.hideOneBlk(i);
+				} 
+			} while (change>0);
+			// for( var i=0;i<9;i++) {
+			// 	change += sudoku.nakeddPairRow(i);
+			// 	change += sudoku.nakeddPairCol(i);
+			// 	change += sudoku.nakeddPairBlk(i);
+			// }
+			// for( var i=0;i<9;i++) {
+			// 	change += sudoku.nakedThreeRow(i);
+			// 	change += sudoku.nakedThreeCol(i);
+			// 	change += sudoku.nakedThreeBlk(i);
+			// }
+			// for( var i=0;i<9;i++) {
+			// 	change += sudoku.hidePairRow(i);
+			// 	change += sudoku.hidePairCol(i);
+			// 	change += sudoku.hidePairBlk(i);
+			// }		
+
+			nakedOneClear();	
+
+		} while (change>0)
+	}
+
+	function hideNakedPairClear() { //advanced Skill
+		do {
+			change = 0;
 			do {
 				change = 0;
 				for( var i=0;i<9;i++) {
-					for (var j=0;j<9;j++) {
-						change += sudoku.clearRow([i,j]);
-						change += sudoku.clearCol([i,j]);
-						change += sudoku.clearBlock([i,j]);
-					}
+					change += sudoku.nakedPairRow(i);
+					change += sudoku.nakedPairCol(i);
+					change += sudoku.nakedPairBlk(i);
 				}
-			displaySudoku(sudoku.cells,0);				
-			console.log('Remove redundant number:'+change);				
 			} while (change>0);
-	
-			
-			change =0;
+			// for( var i=0;i<9;i++) {
+			// 	change += sudoku.nakedThreeRow(i);
+			// 	change += sudoku.nakedThreeCol(i);
+			// 	change += sudoku.nakedThreeBlk(i);
+			// }
+			// for( var i=0;i<9;i++) {
+			// 	change += sudoku.hidePairRow(i);
+			// 	change += sudoku.hidePairCol(i);
+			// 	change += sudoku.hidePairBlk(i);
+			// }		
+
+			hideOneClear();	
+
+		} while (change>0)
+
+	}
+
+
+	// nakedOneClear();
+	// hideOneClear();
+	// hideNakedPairClear();
+	// hideNakedPairClear();
+
+	// sudoku.nakedPairCol(6);	
+	// console.log('break');
+	// sudoku.nakedPairCol(6);
+	// 				change += sudoku.hideOneBlk(5);	
+	// nakedOneClear();
+	// 	hideOneClear();
+	// 	hideNakedPairClear();
+
+	// for (i=0;i<9;i++){
+		// sudoku.hidePairsCol(i);
+		// sudoku.hidePairsRow(i);
+		// sudoku.hidePairsBlk(2);
+		// sudoku.hideOneBlk(3);
+	// }
+	// nakedOneClear();
+	// if (sudoku.checkValid()) {
+	// 	console.log("Success!");//} else {console.log("Failure!");
+	// } else {
+		
+
+	easylist  = [ Sudoku.prototype.clearRow,
+				 Sudoku.prototype.clearCol,
+				 Sudoku.prototype.clearBlk
+				 // Sudoku.prototype.hideOneBlk,
+				 // Sudoku.prototype.hideOneRow,
+				 // Sudoku.prototype.hideOneCol
+				 ];
+
+	function easy() {
+		do {
+			change = 0;
 			for( var i=0;i<9;i++) {
+				for (var j=0;j<easylist.length;j++) {
+					change += easylist[j].call(sudoku,i)
 
-					change += sudoku.reverse2Row(i);
-					change += sudoku.reverse2Col(i);
-					change += sudoku.reverse2Block(i);
-
-			}
-
-
-			displaySudoku(sudoku.cells,0);
-			console.log( "Double Number:"+ change );
-			changeBlock =0;
-			for (var i=0;i<9;i++) {
-				changeBlock += sudoku.reverseBlock(i);
-				// changeBlock += sudoku.reverseRow(i);
-				// changeBlock += sudoku.reverseCol(i);
-				// console.log(changeBlock);
-			}
-			displaySudoku(sudoku.cells,0);
-			console.log("Exclude number in block:"+changeBlock);
-			change += changeBlock;
-			for (var i=0;i<9;i++) {
-				changeBlock += sudoku.mulnumn_inarow(i);
-				changeBlock += sudoku.mulnumn_inacol(i);
-				// console.log(changeBlock);
-			}			
-
-
-			for( var i=0;i<9;i++) {
-
-					change += sudoku.reverse3Row(i);
-					change += sudoku.reverse3Col(i);
-					change += sudoku.reverse3Block(i);
-
-			}
-
-		} while (change>0);
-
-
-
+				}
+			}				
+			console.log('Remove redundant number:'+change);
+		} while (change>0);	
 		sudoku.solution.push({
-	 					cellsStr: cells2Str(sudoku.cells),
-	 					method: 'Last',
-	 					row: 0,
-	 					col: 0,
-	 					num: '100'}
-		)	 
-
-
+		cellsStr: cells2Str(sudoku.cells),
+		method: 'Afetr NakeOne Round',
+		row: -1,
+		col: -1,
+		num: '0'}
+		)	
 	}
 
+	easy();
 
 
-	clearAll();
+	if (sudoku.checkValid()) {
+		console.log("Success!");//} else {console.log("Failure!");
+	} else {
+		console.log('Failed');
+		// if (sudoku.bruteresolve()) {
+		// 	sudoku.solution.push({
+		// 		cellsStr: cells2Str(sudoku.cells),
+		// 		method: 'Last',
+		// 		row: 0,
+		// 		col: 0,
+		// 		num: '100'}
+		// 	)	 				
+		// } else {
 
-	for (var i=0;i<9;i++) {
-		// changeBlock += sudoku.reverseBlock(i);
-		changeBlock += sudoku.reverseRow(i);
-		changeBlock += sudoku.reverseCol(i);
-		// console.log(changeBlock);
+		// 	console.log('Failed');
+		// }
 	}
-
-	clearAll();
-	// sudoku.mulnumn_inacol(3);
-
-	// sudoku.solution.push({
-	// 	cellsStr: cells2Str(sudoku.cells),
-	// 	method: 'Last',
-	// 	row: 0,
-	// 	col: 0,
-	// 	num: '100'}
-	// )	 
-
-	// clearAll();
-
-	// sudoku.mulnumn_inarow(8);
-
-	// sudoku.solution.push({
-	// 	cellsStr: cells2Str(sudoku.cells),
-	// 	method: 'Last',
-	// 	row: 0,
-	// 	col: 0,
-	// 	num: '100'}
-	// )	 
-
-	clearAll();
-
-	if (sudoku.checkValid()) {console.log("Success!");} else {console.log("Failure!");};
-	console.log(sudoku.solution[0]);
+	// console.log(sudoku.solution[0]);
 	// change = sudoku.reverseBlock(8,1);
 	// // clearReverse();
 	// displaySudoku();
 	// console.log(change);
-	console.log(sudoku.solution.length);
+	// console.log(sudoku.solution.length);
 	var solutionHtml ='<p>';
 	for (var i=0;i<sudoku.solution.length;i++) {
 		solutionHtml += '<a class="step" id="s'+i+'">'+(i+1)+' </a>';
