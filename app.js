@@ -12,11 +12,6 @@ app.use('/',function (req,res) {
 		root: __dirname
 	};
 	res.sendFile('./index.html',opts);
-	// fs.readFile('index.html','utf8',function (err,data) {
-	// 	res.setHeader('Content-Type', 'text/html');
-	// 	res.end(data);
-	// 	// body...
-	// })
 })
 
 app.listen(WEBPORT,function () {

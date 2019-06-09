@@ -331,7 +331,7 @@ Sudoku.prototype.nakedPairRow = function(row) {
 			}
 			if ( match.length==2) { 
 				for (var j=0;j<9;j++) {
-					if (this.cells[row][j].length >= 3) {	
+					if (this.cells[row][j].length >1 && this.cells[row][j] != i) {	
 						var len= this.cells[row][j].length
 		 				this.cells[row][j] = this.cells[row][j].replace(num1,'').replace(num2,'');
 	 				 	if (len== this.cells[row][j].length) continue;
@@ -377,7 +377,7 @@ Sudoku.prototype.nakedPairCol = function(col) {
 			}
 			if ( match.length===2) { 
 				for (var j=0;j<9;j++) {
-					if (this.cells[j][col].length >= 3) {
+					if (this.cells[j][col].length >1 && this.cells[j][col] != i) {
 					// console.log('cell'+match+j);			
 						var len = this.cells[j][col].length;
 		 				this.cells[j][col] = this.cells[j][col].replace(num1,'').replace(num2,'');
@@ -428,7 +428,7 @@ Sudoku.prototype.nakedPairBlk = function(blk) {
 				// console.log(m)
 				for (var j=blockStart[blk][0];j<blockStart[blk][0]+3;j++) {
 					for (var k=blockStart[blk][1];k<blockStart[blk][1]+3;k++) {
-						if (this.cells[j][k].length >=3)  {	
+						if (this.cells[j][k].length >1 && this.cells[j][k] != i)  {	
 							var len= this.cells[j][k].length;	
 			 				this.cells[j][k] = this.cells[j][k].replace(num1,'').replace(num2,'');
 			 				if (len==this.cells[j][k].length ) continue;
@@ -437,7 +437,7 @@ Sudoku.prototype.nakedPairBlk = function(blk) {
 			 					cellsStr: cells2Str(this.cells),
 			 					method: 'NakedPair Block',
 			 					row: j,
-			 					col: t,
+			 					col: k,
 			 					num: num1+''+num2 }
 			 					)
 		 					} else {
@@ -445,7 +445,7 @@ Sudoku.prototype.nakedPairBlk = function(blk) {
 			 					cellsStr: cells2Str(this.cells),
 			 					method: 'NakedPair Block-candidate remove',
 			 					row: j,
-			 					col: t,
+			 					col: k,
 			 					num: num1+''+num2 }
 			 					)		 						
 		 					}
@@ -461,10 +461,14 @@ Sudoku.prototype.nakedPairBlk = function(blk) {
 }	
 
 
-Sudoku.prototype.reverse3Row = function(row) {
+Sudoku.prototype.naked3Row = function(row) {
 	var match;
 	var change =0;
-	var i='';
+	var freenums= getFreeNumRow(this.cells,row);
+	tripletList = genTripletFromList(freenums);
+	if (tripletList.length == 0) return 0;
+	// for ()
+//
 	if (row < 9 && row>=0) {
 		for(var num1=1;num1<=7;num1++) { //Test whether number is unique in a row 
 			for (var num2=num1+1;num2<=8;num2++ ) {
@@ -507,102 +511,142 @@ Sudoku.prototype.reverse3Row = function(row) {
 
 }
 
-
-Sudoku.prototype.reverse3Col = function(col) {
-	var match;
+Sudoku.prototype.naked3Row = function(row) {
+	var match=0,cellspos;
 	var change =0;
-	var i='';
-	if (col < 9 && col>=0) {
-		for(var num1=1;num1<=7;num1++) { //Test whether number is unique in a row 
-			for (var num2=num1+1;num2<=8;num2++ ) {
-				for (var num3=num2+1;num3<=9;num3++) {
-					i= num1+''+num2+num3;
-					match = [];
-					for (var j=0;j<9;j++) {
-						if (this.cells[j][col] === i ) {			
-							match.push(j);
-						}
+	var freenums= getFreeNumRow(this.cells,row);
+	var tripletList = genTripletFromList(freenums);
+	if (tripletList.length == 0) return 0;
+	// console.log('Triplet'+tripletList[2]);
+	for (var k=0;k<tripletList.length;k++) {
+		match = 0;
+		cellspos =[];
+
+		for (var j=0;j<9;j++) {
+			if (tripletList[k].indexOf(this.cells[row][j])>=0) {
+				match++;
+				cellspos.push(''+i);					
+			}		
+		}
+		if (match == 3) {
+			for (var j=0;j<9;j++) {
+				var originlen=this.cells[row][j].length;
+				if (this.cells[row][j].length>1  &&  cellspos.indexOf(''+i)<0) {
+					var tripes=tripletList[k][3].split('');// [3]是3个数（triplet组成的一个字符串
+					for (var l=0;l<3;l++) {
+						this.cells[row][j] = this.cells[row][j].replace(tripes[l],'');
 					}
-					if ( match.length===3) { 
-						for (var j=0;j<9;j++) {
-							if (this.cells[j][col].length > 1 && j!==match[0] && j!=match[1] && j!==match[2]) {			
-				 				var str = this.cells[j][col].replace(num1,'');
-				 				str = str.replace(num2,'');
-				 				str = str.replace(num3,'')
-		 						change += str==this.cells[j][col]?0:1;
-		 						this.cells[j][col] =str;
-				 				if (str.length === 1) {this.solution.push({
-				 					cellsStr: cells2Str(this.cells),
-				 					method: 'reverse3Col',
-				 					col: col,
-				 					row: j,
-				 					num:str }
-				 					)}		 						
-							}
+					if (this.cells[row][j].length != originlen) {
+						change++;
+		 				if (this.cells[row][j].length ==1) {this.solution.push({
+		 					cellsStr: cells2Str(this.cells),
+		 					method: 'Nake Triplet - Row',
+		 					col: j,
+		 					row: row,
+		 					num: tripletList[k] }
+		 					)}								
 					}
-						return change;
-					}
-				}		
+				}	
 			}
-		}	
-	} else {
-	 	console.log("reverse2Col:row err");		
+		}
 	}
 	return change;
-
 }
 
-
-Sudoku.prototype.reverse3Block = function(block) {
-	var match;
+Sudoku.prototype.naked3Col = function(col) {
+	var match=0,cellspos;
 	var change =0;
-	var i='';
-	if (block < 9 && block>=0) {
-		for(var num1=1;num1<=7;num1++) { //Test whether number is unique in a row 
-			for (var num2=num1;num2<=8;num2++ ) {
-				for (var num3=num2+1;num3<=9;num3++){
-					i= num1+''+num2+num3;
-					match = [];
-					for (var j=blockStart[block][0];j<blockStart[block][0]+3;j++) {
-						for (var t=blockStart[block][1];t<blockStart[block][1]+3;t++) {
-							if (this.cells[j][t] === i ) {			
-								match.push([j,t]);
-							}
-						}	
+	var freenums= getFreeNumCol(this.cells,col);
+	var tripletList = genTripletFromList(freenums);
+	if (tripletList.length == 0) return 0;
+	// console.log('Triplet'+tripletList[2]);
+	for (var k=0;k<tripletList.length;k++) {
+		match = 0;
+		cellspos =[];
+
+		for (var i=0;i<9;i++) {
+			if (tripletList[k].indexOf(this.cells[i][col])>=0) {
+				match++;
+				cellspos.push(''+i);					
+			}		
+		}
+		if (match == 3) {
+			for (var i=0;i<9;i++) {
+				var originlen=this.cells[i][col].length;
+				if (this.cells[i][col].length>1  &&  cellspos.indexOf(''+i)<0) {
+					var tripes=tripletList[k][3].split('');// [3]是3个数（triplet组成的一个字符串
+					for (var l=0;l<3;l++) {
+						this.cells[i][col] = this.cells[i][col].replace(tripes[l],'');
 					}
-					if ( match.length===3) { 
-						for (var j=blockStart[block][0];j<blockStart[block][0]+3;j++) {
-							for (var t=blockStart[block][1];t<blockStart[block][1]+3;t++) {
-								if (this.cells[j][t].length > 1 &&  j+''+t !== match[0].join('') && j+''+t !== match[1].join('') && j+''+t !== match[2].join(''))  {			
-					 				var str = this.cells[j][t].replace(num1,'');
-					 				str = str.replace(num2,'');
-					 				str = str.replace(num3,'')
-			 						change += str==this.cells[j][t]?0:1;
-			 						this.cells[j][t] =str;
-					 				if (str.length === 1) {this.solution.push({
-					 					cellsStr: cells2Str(this.cells),
-					 					method: 'reverse3Block',
-					 					col: t,
-					 					row: j,
-					 					num:str }
-					 					)}			 						
-								}
-							}
-						}	
-						return change;
-					}	
+					if (this.cells[i][col].length != originlen) {
+						change++;
+		 				if (this.cells[i][col].length ==1) {this.solution.push({
+		 					cellsStr: cells2Str(this.cells),
+		 					method: 'Nake Triplet - Col',
+		 					col: col,
+		 					row: i,
+		 					num: tripletList[k] }
+		 					)}								
+					}
+				}	
+			}
+		}
+	}
+	return change;
+}
+
+Sudoku.prototype.naked3Blk = function(blk) {
+	var match=0,cellspos;
+	var change =0;
+	var freenums= getFreeNumBlk(this.cells,blk);
+	var tripletList = genTripletFromList(freenums);
+	if (tripletList.length == 0) return 0;
+	var x=blockStart[blk][0],y=blockStart[blk][1];
+	for (var k=0;k<tripletList.length;k++) {
+		match = 0;
+		cellspos =[];
+
+		for (var i=x;i<x+3;i++) {
+			for (var j=y;j<y+3;j++) {
+
+				if (tripletList[k].indexOf(this.cells[i][j])>=0) {
+					match++;
+					cellspos.push(''+i+j);					
 				}
 			}
-		}	
-	} else {
-	 	console.log("reverse2Block:row err");		
+		}
+		if (match == 3) {
+			for (var i=x;i<x+3;i++) {
+				for (var j=y;j<y+3;j++) {
+					var originlen=this.cells[i][j].length;
+					if (this.cells[i][j].length>1  &&  cellspos.indexOf(''+i+j)<0) {
+						var tripes=tripletList[k][3].split('');// [3]是3个数（triplet组成的一个字符串
+
+						for (var l=0;l<3;l++) {
+							this.cells[i][j] = this.cells[i][j].replace(tripes[l],'');
+						}
+						if (this.cells[i][j].length != originlen) {
+							change++;
+			 				if (this.cells[i][j].length ==1) {this.solution.push({
+			 					cellsStr: cells2Str(this.cells),
+			 					method: 'Nake Triplet - Block',
+			 					col: i,
+			 					row: j,
+			 					num: tripletList[k] }
+			 					)}								
+						}
+					}
+				}
+			}
+		}
 	}
+
 	return change;
 
 }
 
 // 在一个Block中的，某个数字指示存在一列中，那在这一列的其他的2个Block中，这是数字是已经被占用的了
-Sudoku.prototype.mulnumn_inacol = function (block) {
+Sudoku.prototype.lcBlk_col = function (block) { //lc = locked candidates 
 	// 检查这个Number是仅仅存在于这个Block的这列中
 	var cols=[],num,change=0,match=0;
 	for (num=1;num<10;num++) {  // 加让这个数字是否只存在这一列中
@@ -641,7 +685,7 @@ Sudoku.prototype.mulnumn_inacol = function (block) {
 }
 
 // 在一个Block中的，某个数字指示存在一行中，那在这一行的其他的2个Block中，这是数字不是一个解
-Sudoku.prototype.mulnumn_inarow = function (block) {
+Sudoku.prototype.lcBlk_row = function (block) { //lc = locked candidates 
 	// 检查这个Number是仅仅存在于这个Block的这行中
 	var cols=[],num,change=0,match=0;
 	for (num=1;num<10;num++) {  // 加让这个数字是否只存在这一列中
@@ -680,7 +724,7 @@ Sudoku.prototype.mulnumn_inarow = function (block) {
 }
 
 // 在一行中的，某个数字只是存在一个block中，那在这一Block的其他位置上，这个数字就不是解了
-Sudoku.prototype.mulnumn_inablk_row = function (row) {
+Sudoku.prototype.lcRow = function (row) { //lc = locked candidates 
 	var match,blk,change=0;
 	for (var num=1;num<10;num++) { // treaver all number
 		if (isResolveinRow(this.cells,row,num)) {
@@ -721,7 +765,7 @@ Sudoku.prototype.mulnumn_inablk_row = function (row) {
 
 
 // 在一列中的，某个数字只是存在一个block中，那在这一Block的其他位置上，这个数字就不是解了
-Sudoku.prototype.mulnumn_inablk_col = function (col) {
+Sudoku.prototype.lcCol = function (col) { //lc = locked candidates 
 	var match,blk,change=0;
 	for (var num=1;num<10;num++) { // treaver all number
 		if (isResolveinCol(this.cells,col,num)) {
@@ -800,14 +844,14 @@ Sudoku.prototype.hidePairsCol = function(col) {
 
 				var row1 = parseInt(quantity[i][0]);
 				var row2 = parseInt(quantity[i][1]);
-				console.log('row:'+row1+':'+row2)
-				if (this.cells[row1][col]+this.cells[row2][col]>5)	{// 获得这两个格子的位置，并且判断这2个格子的可能解至少有一个是超过2个的，不然就不是hiden了
-					match +=1;
+				// console.log('row:'+row1+':'+row2)
+				if (this.cells[row1][col].length+this.cells[row2][col].length>5)	{// 获得这两个格子的位置，并且判断这2个格子的可能解至少有一个是超过2个的，不然就不是hiden了
+					match ++;
 					this.cells[row1][col] = freenums[i]+''+freenums[j];
 					this.cells[row2][col] = freenums[i]+''+freenums[j];
 					this.solution.push({
 			 					cellsStr: cells2Str(this.cells),
-			 					method: 'hidePair Col-candidate remove',
+			 					method: 'HidePair col-Candidate remove',
 			 					row: row1+' '+row2,
 			 					col: col,
 			 					num: freenums[i]+''+freenums[j]}
@@ -853,13 +897,13 @@ Sudoku.prototype.hidePairsRow = function(row) {
 				var col1 = parseInt(quantity[i][0]);
 				var col2 = parseInt(quantity[i][1]);
 				// console.log('row:'+row1+':'+row2)
-				if (this.cells[row][col1]+this.cells[row][col2]>5)	{// 获得这两个格子的位置，并且判断这2个格子的可能解至少有一个是超过2个的，不然就不是hiden了
+				if (this.cells[row][col1].length+this.cells[row][col2].length>5)	{// 获得这两个格子的位置，并且判断这2个格子的可能解至少有一个是超过2个的，不然就不是hiden了
 					match +=1;
 					this.cells[row][col1] = freenums[i]+''+freenums[j];
 					this.cells[row][col2] = freenums[i]+''+freenums[j];
 					this.solution.push({
 	 					cellsStr: cells2Str(this.cells),
-	 					method: 'HiddenPairs in row-Candidate remove',
+	 					method: 'HidePair in row-Candidate remove',
 	 					col: col1+' '+col2,
 	 					row: row,
 	 					num: freenums[i]+''+freenums[j] }
@@ -908,13 +952,13 @@ Sudoku.prototype.hidePairsBlk = function(blk) {
 				var row2 = parseInt(quantity[i][2]);
 				var col2 = parseInt(quantity[i][3]);
 				// console.log('row:'+row1+':'+row2)
-				if (this.cells[row1][col1]+this.cells[row2][col2]>5)	{// 获得这两个格子的位置，并且判断这2个格子的可能解至少有一个是超过2个的，不然就不是hiden了
+				if (this.cells[row1][col1].length+this.cells[row2][col2].length>5)	{// 获得这两个格子的位置，并且判断这2个格子的可能解至少有一个是超过2个的，不然就不是hiden了
 					match +=1;
 					this.cells[row1][col1] = freenums[i]+''+freenums[j];
 					this.cells[row2][col2] = freenums[i]+''+freenums[j];
 					this.solution.push({
 	 					cellsStr: cells2Str(this.cells),
-	 					method: 'HiddenPairs in blk - candidate remove',
+	 					method: 'HidePair in blk - Candidate remove',
 	 					col: col1+' '+col2,
 	 					row: row1+' '+row2,
 	 					num: freenums[i]+''+freenums[j] }
@@ -1031,6 +1075,21 @@ function getPosbyNum(cells,blk,num) {
 
 }
 
+function genTripletFromList(nums) {
+	var tripletList = [];
+	var numslen = nums.length;
+	if (numslen<4) return tripletList;
+	
+	for (var i=0;i<numslen-2;i++) {
+		for (var j=i+1;j<numslen-1;j++) {
+			for (var k=j+1;k<numslen;k++) {
+				tripletList.push([''+nums[i]+nums[j],''+nums[i]+nums[k],''+nums[j]+nums[k],''+nums[i]+nums[j]+nums[k]]);
+			}
+		}
+	}
+	return tripletList;
+}
+
 function checkmulnum_inarow(cells,block,x,num) {   // x是行,Number 具体数字
 	 var match = 0;
 	 if (isResolveinRow(cells,x,num)) {
@@ -1116,22 +1175,23 @@ Sudoku.prototype.bruteresolve = function() {
 			}
 		}
 	}
-	// console.log(cellstack[0]);
 	var results =[];
 	var solutions = [];
 	var match = 0;
 	var pos;
 	var result =traverse(this.cells,cellstack,solutions,results);
-	// console.log(result[0]);
-	// console.log(result);
 	if (result.length==1) {
 		for (i=0;i<result[0].length;i++) {
-
 			var pos = cellstack[i];
-			// console.log(pos)
-			// console.log('Pos:'+pos[0]+':'+pos[1]+':'+pos[2]+':'+result[0][i]);
 			this.cells[pos[0]][pos[1]] = pos[2][parseInt(result[0][i])];
 		}
+		this.solution.push({
+				cellsStr: cells2Str(this.cells),
+				method: 'Brtute Resolve',
+				col: 0,
+				row: 0,
+				num: "Final" }
+				)		
 		return 1;
 	}
 	// console.log(this.cells)
@@ -1199,21 +1259,7 @@ function copy(cell) {
     return newcell; 
 }
 
-// function tr(stack,solution,result) {
-// 	if (stack.length > solution.length) {
-// 		for (var i=0;i<stack[solution.length];i++) { 			
-// 			solution.push(i); 
-// 			tr(stack,solution,result);
-// 		} 
-// 		solution.pop();
-// 		return;
-// 	} else {
-// 			result.push(solution);
-// 			// console.log(solution);
-// 			solution.pop();
-// 			return;
-// 	}
-// }
+
 
 function checkValids(cells) {
 	var all;
@@ -1262,9 +1308,7 @@ function checkValids(cells) {
 
 };
 
-Sudoku.prototype.testcall = function(num) {
-	console.log("number:",num);
-};
+
 Sudoku.prototype.checkValid= function() {
 	var all;
 	for (var i=0;i<9;i++) { //row

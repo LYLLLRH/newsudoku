@@ -11,10 +11,21 @@
 	    </ul>
 	</div>
 	<div class="solutioncontainer">
-	<div class="solutions"></div>
-	<div> <i id="solutioninfo"> 步骤：</i> </div>
-	<div><input type="checkbox"  id="possibility" checked>显示可能性</div>
+		<div class="solutions"></div>
+		<div> <i id="solutioninfo"> 步骤：</i> </div>
+		<div><input type="checkbox"  id="possibility" checked>显示可能性</div>
+		<div><button id='basicclear'>Basic Clear</button></div>
+		<div>
+			<button id='nakedtwo'>Naked Two</button> 
+			<button id='locatedcandidate'>Locked Candidates</button>
+			<!-- <button id='hidetwo'>Hided Two</button> -->
+			<button id='pointingtwo'>Pointing Two</button>
+			<button id='claimingtwo'>Claiming Two</button>
+			<button id='nakedtriplet'>Naked Triplet</button>
+		</div>		
+		<div><button id='resolve'>Resolve</button></div>
 	</div>
+
 	<script type="text/javascript" src="./jquery.min.js"></script>
 	<script type="text/javascript" src="./index.js"></script>	
 	<script>
@@ -63,11 +74,13 @@
     
 	}
 
+
+	var resolved = 0
 	initialDisplaySudoku();
 
-	var sudoku = new Sudoku('851200093030008200940631750000000860620000407000070001090400070214060905360805100'); //Easy 
+	// var sudoku = new Sudoku('851200093030008200940631750000000860620000407000070001090400070214060905360805100'); //Easy 
 	// var sudoku = new Sudoku('070000160000030800024650900600000301050048020207109005300020007490705000000080000');  //Medium
-	// var sudoku = new Sudoku('004009807006010400820003160000408005030000000090021000009032081000090003000600000'); //Hard
+	var sudoku = new Sudoku('004009807006010400820003160000408005030000000090021000009032081000090003000600000'); //Hard
 
     // var sudoku = new Sudoku('005000701000070400006000008401253800008761045560894010059027180010000629080009000');
    // var sudoku = new Sudoku('000000000810009000005103002900001040007000300140002798008310000530094007400080003');
@@ -96,7 +109,7 @@
 
  	// var sudoku = new Sudoku('070250400800000903000003070700004020100000007040500008090600000401000005007082030')
  	//  大师
- // 	var sudoku = new Sudoku('000000000030104006007050032009215000100000007000900000305002800800000960071800000');
+ 	var sudoku = new Sudoku('000000000030104006007050032009215000100000007000900000305002800800000960071800000');   // 
 	// var sudoku = new Sudoku('000006500030000904006200003401000000000000009083000007900020000078050002012704300');
 	// var sudoku = new Sudoku('003509008080724900500001000008007000300095060060203100000008007070052000801976042')
 	// var sudoku = new Sudoku('900306007000807009000000035200000004480003000035009020070000910006004050320001000')	
@@ -157,16 +170,7 @@
 	// var sudoku = new Sudoku('240600001003000007000009020004735009000596205500841600080100000900000100100006054')
 	
 	function displaySudoku (cells,debug) {
-		// console.log('-----------------------------------------');
-		// console.log(sudoku.cells[0]);
-		// console.log(sudoku.cells[1]);
-		// console.log(sudoku.cells[2]);
-		// console.log(sudoku.cells[3]);
-		// console.log(sudoku.cells[4]);
-		// console.log(sudoku.cells[5]);
-		// console.log(sudoku.cells[6]);
-		// console.log(sudoku.cells[7]);
-		// console.log(sudoku.cells[8]);
+
 		if( !debug) {return;}
 		for (var i=0;i<81;i++) {
 			if ($("#"+i+">i").text()!==cells[Math.floor(i/9)][i%9]) {
@@ -183,11 +187,7 @@
 		var str = '';
 		for (var i=0;i<9;i++) {
 			for (var j=0;j<9;j++) {
-				// if (cells[i][j].length===1) {
-				// 	str+=cells[i][j]+':';
-				// } else {
-				// 	str+=;
-				// }
+
 				str += cells[i][j]+":";
 			}
 		}
@@ -203,6 +203,43 @@
 			displaySudokuOneDimension( sudoku.solution[$('.selectMove').text()-1]);
 		}
 	});
+
+	$('#basicclear').on('click',function(e) {
+		easy();
+		bindSolution();
+	});
+
+	$('#nakedtwo').on('click',function(e) {
+		hideNakedPairClear();
+		bindSolution();
+	});
+
+	$('#locatedcandidate').on('click',function (e) {
+		lcClear();
+		bindSolution();
+	})
+
+	$('#claimingtwo').on('click',function (e) {
+		cliamingTwoClear();
+		bindSolution();
+	})
+
+	$('#pointingtwo').on('click',function (e) {
+		pointingTwoClear();
+		bindSolution();
+	})	
+
+	$('#nakedtriplet').on('click',function (e) {
+		nakedTripletClear();
+		bindSolution();
+	})	
+
+	$('#resolve').on('click',function (e) {
+		if ( resolved==1) return;
+		sudoku.bruteresolve();
+		resolved = 1;
+		bindSolution();
+	})		
 
 	function displaySudokuOneDimension(solution,debug) {
 		// console.log("display:"+cells);
@@ -309,69 +346,60 @@
 		} while (change>0)
 	}
 
-	function hideNakedPairClear() { //advanced Skill
-		do {
-			change = 0;
-			do {
-				change = 0;
-				for( var i=0;i<9;i++) {
-					change += sudoku.nakedPairRow(i);
-					change += sudoku.nakedPairCol(i);
-					change += sudoku.nakedPairBlk(i);
-				}
-			} while (change>0);
-			// for( var i=0;i<9;i++) {
-			// 	change += sudoku.nakedThreeRow(i);
-			// 	change += sudoku.nakedThreeCol(i);
-			// 	change += sudoku.nakedThreeBlk(i);
-			// }
-			// for( var i=0;i<9;i++) {
-			// 	change += sudoku.hidePairRow(i);
-			// 	change += sudoku.hidePairCol(i);
-			// 	change += sudoku.hidePairBlk(i);
-			// }		
+	function lcClear() {
 
-			hideOneClear();	
-
-		} while (change>0)
+		change = 0;
+		for (var i=0;i<9;i++) {
+			change +=sudoku.lcBlk_row(i);
+			change +=sudoku.lcBlk_col(i);
+			change +=sudoku.lcRow(i);
+			change +=sudoku.lcCol(i);
+		}
 
 	}
 
+	function cliamingTwoClear() {
+		change = 0;
+		for (var i=0;i<9;i++) {
+			change +=sudoku.hidePairsBlk(i);
+		}
+	}
 
-	// nakedOneClear();
-	// hideOneClear();
-	// hideNakedPairClear();
-	// hideNakedPairClear();
+	function pointingTwoClear(){
+		change = 0;
+		for (var i=0;i<9;i++) {
+			change +=sudoku.hidePairsRow(i);
+			change +=sudoku.hidePairsCol(i);
+		}
+	}
 
-	// sudoku.nakedPairCol(6);	
-	// console.log('break');
-	// sudoku.nakedPairCol(6);
-	// 				change += sudoku.hideOneBlk(5);	
-	// nakedOneClear();
-	// 	hideOneClear();
-	// 	hideNakedPairClear();
+	function hideNakedPairClear() { //advanced Skill
+		for( var i=0;i<9;i++) {
+			change += sudoku.nakedPairRow(i);
+			change += sudoku.nakedPairCol(i);
+			change += sudoku.nakedPairBlk(i);
+		}
+	}
 
-	// for (i=0;i<9;i++){
-		// sudoku.hidePairsCol(i);
-		// sudoku.hidePairsRow(i);
-		// sudoku.hidePairsBlk(2);
-		// sudoku.hideOneBlk(3);
-	// }
-	// nakedOneClear();
-	// if (sudoku.checkValid()) {
-	// 	console.log("Success!");//} else {console.log("Failure!");
-	// } else {
+	function nakedTripletClear(e) {
+		for( var i=0;i<9;i++) {
+			change += sudoku.naked3Blk(i);
+			change += sudoku.nakedPairCol(i);
+			change += sudoku.nakedPairBlk(i);
+		}	
+	}
 		
 
 	easylist  = [ Sudoku.prototype.clearRow,
 				 Sudoku.prototype.clearCol,
-				 Sudoku.prototype.clearBlk
-				 // Sudoku.prototype.hideOneBlk,
-				 // Sudoku.prototype.hideOneRow,
-				 // Sudoku.prototype.hideOneCol
+				 Sudoku.prototype.clearBlk,
+				 Sudoku.prototype.hideOneBlk,
+				 Sudoku.prototype.hideOneRow,
+				 Sudoku.prototype.hideOneCol
 				 ];
 
 	function easy() {
+		var turns = 0;  // turns 判断是否有成功的清除
 		do {
 			change = 0;
 			for( var i=0;i<9;i++) {
@@ -381,56 +409,43 @@
 				}
 			}				
 			console.log('Remove redundant number:'+change);
-		} while (change>0);	
-		sudoku.solution.push({
-		cellsStr: cells2Str(sudoku.cells),
-		method: 'Afetr NakeOne Round',
-		row: -1,
-		col: -1,
-		num: '0'}
-		)	
+		} while (change>0 && ++turns);	
+		if (turns>0) {
+			sudoku.solution.push({
+			cellsStr: cells2Str(sudoku.cells),
+			method: 'Afetr NakeOne Round',
+			row: -1,
+			col: -1,
+			num: '0'}
+			)
+		}			
 	}
 
 	easy();
-
-
 	if (sudoku.checkValid()) {
 		console.log("Success!");//} else {console.log("Failure!");
 	} else {
+		// sudoku.bruteresolve();
 		console.log('Failed');
-		// if (sudoku.bruteresolve()) {
-		// 	sudoku.solution.push({
-		// 		cellsStr: cells2Str(sudoku.cells),
-		// 		method: 'Last',
-		// 		row: 0,
-		// 		col: 0,
-		// 		num: '100'}
-		// 	)	 				
-		// } else {
-
-		// 	console.log('Failed');
-		// }
 	}
-	// console.log(sudoku.solution[0]);
-	// change = sudoku.reverseBlock(8,1);
-	// // clearReverse();
-	// displaySudoku();
-	// console.log(change);
-	// console.log(sudoku.solution.length);
-	var solutionHtml ='<p>';
-	for (var i=0;i<sudoku.solution.length;i++) {
-		solutionHtml += '<a class="step" id="s'+i+'">'+(i+1)+' </a>';
-	}
-	solutionHtml+='</p>';
-	$(".solutions").html(solutionHtml);
 
-	$('.step').bind('click',function(e){
-		// console.log(sudoku.solution[$(this).text()-1].cellsStr);
-		$('.selectMove').removeClass('selectMove');
-		$(this).addClass('selectMove');
-		displaySudokuOneDimension(sudoku.solution[$(this).text()-1]);
-		displaySolutionInfo(sudoku.solution[$(this).text()-1]);
-	})
+
+	function bindSolution() {
+		var solutionHtml ='<p>';
+		for (var i=0;i<sudoku.solution.length;i++) {
+			solutionHtml += '<a class="step" id="s'+i+'">'+(i+1)+' </a>';
+		}
+		solutionHtml+='</p>';
+		$(".solutions").html(solutionHtml);
+
+		$('.step').bind('click',function(e){
+			// console.log(sudoku.solution[$(this).text()-1].cellsStr);
+			$('.selectMove').removeClass('selectMove');
+			$(this).addClass('selectMove');
+			displaySudokuOneDimension(sudoku.solution[$(this).text()-1]);
+			displaySolutionInfo(sudoku.solution[$(this).text()-1]);
+		})
+	}	
 
 });
 
