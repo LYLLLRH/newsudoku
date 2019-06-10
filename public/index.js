@@ -46,14 +46,7 @@ function getNumberInBlk(cells,blk) {
 
 function clearNum_incol(cells,block,col,num) {
 	var rows =[];
-	for(var i=blockStart[block][0];i<blockStart[block][0]+3;i++) {
-		if (cells[i][col].length>1) {
-			cells[i][col] = cells[i][col].replace(num,'');
-			if(cells[i][col].length ==1) {
-				rows.push(i);
-			}
-		}
-	}
+	// }
 	return rows;   // 返回移除这个数字的行的列表
 }
 
@@ -129,11 +122,11 @@ var Sudoku = function(cfg){
 
 
 
-Sudoku.prototype.add = function(coord,number) {
-	if (coord && coord[0] < 9 && coord[0]>=0 && coord[1]<9 && coord[1]>=0) {
-	 	this.cells[coord[0]][coord[1]] = number;
+Sudoku.prototype.add = function(cell,number) {
+	if (cell && cell[0] < 9 && cell[0]>=0 && cell[1]<9 && cell[1]>=0) {
+	 	this.cells[cell[0]][cell[1]] = number;
 	 } else {
-	 	console.log("coord err");
+	 	console.log("cell err");
 	 }
 }
 
@@ -462,56 +455,6 @@ Sudoku.prototype.nakedPairBlk = function(blk) {
 
 
 Sudoku.prototype.naked3Row = function(row) {
-	var match;
-	var change =0;
-	var freenums= getFreeNumRow(this.cells,row);
-	tripletList = genTripletFromList(freenums);
-	if (tripletList.length == 0) return 0;
-	// for ()
-//
-	if (row < 9 && row>=0) {
-		for(var num1=1;num1<=7;num1++) { //Test whether number is unique in a row 
-			for (var num2=num1+1;num2<=8;num2++ ) {
-				for (var num3=num3+1;num3<=9;numb3++) {
-
-
-					i= num1+''+num2+num3;
-					match = [];
-					for (var j=0;j<9;j++) {
-						if (this.cells[row][j] === i ) {			
-							match.push(j);
-						}
-					}
-					if ( match.length===3) { 
-						for (var j=0;j<9;j++) {
-							if (this.cells[row][j].length > 1 && j!==match[0] && j!=match[1] && j!==match[2]) {			
-				 				var str = this.cells[row][j].replace(num1,'');
-				 				str = str.replace(num2,'');
-				 				str = str.replace(num3,'');
-		 						change += str==this.cells[row][j]?0:1;
-		 						this.cells[row][j] =str;
-				 				if (str.length === 1) {this.solution.push({
-				 					cellsStr: cells2Str(this.cells),
-				 					method: 'reverse3Row',
-				 					col: j,
-				 					row: row,
-				 					num:str }
-				 					)}	
-							}
-					}
-						return change;
-					}	
-				}		
-			}
-		}	
-	} else {
-	 	console.log("reverse2Row:row err");		
-	}
-	return change;
-
-}
-
-Sudoku.prototype.naked3Row = function(row) {
 	var match=0,cellspos;
 	var change =0;
 	var freenums= getFreeNumRow(this.cells,row);
@@ -646,41 +589,58 @@ Sudoku.prototype.naked3Blk = function(blk) {
 }
 
 // 在一个Block中的，某个数字指示存在一列中，那在这一列的其他的2个Block中，这是数字是已经被占用的了
-Sudoku.prototype.lcBlk_col = function (block) { //lc = locked candidates 
+Sudoku.prototype.lcBlk_col = function (blk) { //lc = locked candidates 
 	// 检查这个Number是仅仅存在于这个Block的这列中
-	var cols=[],num,change=0,match=0;
-	for (num=1;num<10;num++) {  // 加让这个数字是否只存在这一列中
-		if (isREsolveinBlk(this.cells,block,num)) {
-			return 0;			
-		}
-		var celllist = getPosbyNum(this.cells,block,num)
-		if (celllist.length>1) {
-			var col = celllist[0][1];
-			for (var i=1;i<celllist.length;i++) {
-				if (col!=celllist[i][1]) {
-					match = 0;
-					break;
-				}
+	var num,match,change=0;
+	var freenums = getFreeNumBlk(this.cells,blk);
+	if (freenums.length<2) return 0;
+	for (var i=0;i<freenums.length;i++) {
+		var celllist = getPosbyNum(this.cells,blk,freenums[i]);
+		var col = celllist[0][1],rows=[celllist[0][0]];
+		for (var j=1;j<celllist.length;j++) {
+			if (col!=celllist[j][1]) {
+				match=0;
+				break;
+			} else {
 				match=1;
+				rows.push(celllist[j][0]); 
 			}
-			if (match==1) {
-				cols =clearNum_incol(this.cells,(block+3)%9,col,num);
-				cols.concat(clearNum_incol(this.cells,(block+6)%9,col,num));
-				for (var l=0;l<cols.length;l++) {
-					this.solution.push({
-	 					cellsStr: cells2Str(this.cells),
-	 					method: 'Remove num in col by a unique number in block',
-	 					col: col,
-	 					row: cols[l],
-	 					num: num }
-	 					)
-				change += 1;
-				}									
-			}
-
 		}
+		if (match==1) {
+			// if (blk == 8) {
+			// 	console.log('celllist:'+ celllist);
+			// 	console.log('freenum:'+freenums[i]);
+			// 	console.log('rows'+rows+':'+col);
+			// 	// console.log('');
+			// }
+			for (j=0;j<9;j++) {  // j 用来遍历row
 
-	}		
+				if (rows.indexOf(j)<0 && this.cells[j][col].length>1 && this.cells[j][col].indexOf(freenums[i])>=0) {
+					if (j==3) console.log('this.cell:'+this.cells[j][col]);					
+					change++;
+					this.cells[j][col]=this.cells[j][col].replace(freenums[i],'')	
+					if (this.cells[j][col].length==1) {
+						this.solution.push({
+		 					cellsStr: cells2Str(this.cells),
+		 					method: 'Locked Candidtes Remove in Block - Col: Block-'+blk,
+		 					col: col,
+		 					row: j,
+		 					num: freenums[i] }
+		 					)					
+					} else {
+						this.solution.push({
+		 					cellsStr: cells2Str(this.cells),
+		 					method: 'Locked Candidtes in Block - Col: Block-'+blk,
+		 					col: col,
+		 					row: j,
+		 					num: freenums[i] }
+		 					)		
+					}
+				}
+			}
+		}				
+	}
+	
 	return change;
 }
 
@@ -689,8 +649,8 @@ Sudoku.prototype.lcBlk_row = function (block) { //lc = locked candidates
 	// 检查这个Number是仅仅存在于这个Block的这行中
 	var cols=[],num,change=0,match=0;
 	for (num=1;num<10;num++) {  // 加让这个数字是否只存在这一列中
-		if (isREsolveinBlk(this.cells,block,num)) {
-			return 0;			
+		if (isResolveinBlk(this.cells,block,num)) {
+			continue;			
 		}
 		var celllist = getPosbyNum(this.cells,block,num)
 		if (celllist.length>1) {
@@ -760,9 +720,6 @@ Sudoku.prototype.lcRow = function (row) { //lc = locked candidates
 	}
 	return change;
 }
-
-
-
 
 // 在一列中的，某个数字只是存在一个block中，那在这一Block的其他位置上，这个数字就不是解了
 Sudoku.prototype.lcCol = function (col) { //lc = locked candidates 
@@ -922,7 +879,7 @@ Sudoku.prototype.hidePairsBlk = function(blk) {
 	var freenums = getFreeNumBlk(this.cells,blk);
 	// 如果剩下的数字小于3 ，只存在3个数字需要解决，不可能存在HidenPair
 	// console.log("free"+freenums);
-	console.log(freenums);
+	// console.log(freenums);
 	if (freenums.length<4) {
 		return 0;
 	}
@@ -939,7 +896,7 @@ Sudoku.prototype.hidePairsBlk = function(blk) {
 		// if （(quantity[i]<2)  continue;  // 如果只有1个格子有这个数的可能性，那就是HidenSingle 的方法，所以也跳过
 		// candidate.push(freenums[i]);  // 所有有且仅有的在2个格子存在可能性的数字储存起来
 	}
-	console.log('quantity'+quantity);
+	// console.log('quantity'+quantity);
 	for (i=0;i<freenums.length-1;i++) {
 		if (quantity[i].length != 4) continue;  // 长度4代表有2个格子
 		for (j=i+1;j<freenums.length;j++) {
@@ -1031,7 +988,7 @@ function isResolveinRow(cells,row,num){
 	return 0;
 }
 
-function isREsolveinBlk(cells,blk,num){
+function isResolveinBlk(cells,blk,num){
 	for (var i=blockStart[blk][0];i<blockStart[blk][0]+3;i++) {
 		for (var j=blockStart[blk][1];j<blockStart[blk][1]+3;j++) {
 			if (cells[i][j]==num) {
@@ -1202,17 +1159,9 @@ function traverse(cell,stack,solution,results) {
 	var pos;
 	var end;
 	var newcell=[];
-	// console.log("st:"+stack.length+'sl:'+solution.length)
 	if (stack.length > solution.length) {
-		// if (solution.length>18) {
-		// 	console.log("st:"+stack.length+'sl:'+solution.length)
-		// }
-
 		for (var k=0;k<stack[solution.length][2].length;k++) {
-			// console.log(cell);
 			pos=stack[solution.length];
-			// console.log(pos);
-
 			newcell = copy(cell);
 			newcell[pos[0]][pos[1]]=pos[2][k];
 			for (var l=0;l<solution.length;l++) {
@@ -1220,29 +1169,17 @@ function traverse(cell,stack,solution,results) {
 				newcell[pos1[0]][pos1[1]]=pos1[2][solution[l]];
 			}
 			newcell[pos[0]][pos[1]]=pos[2][k];
-			// }
 			if (!checkValids(newcell)) {
 				continue;
 			}			
 			solution.push(k); 		
 			results=traverse(cell,stack,solution,results);
-			// if (results.length >0) {
-			// 	console.log('answer:'+results[0]);
-			// }
 		} 
 		solution.pop();	
 		return results;
-	} else {
-
-		console.log("Good!")
-		// console.log("st:"+stack.length+'sl:'+solution.length)	
-
-		// RESULT.push(solution);
-		results.push(solution.join(''));
+	} else {   // 找到解决方案
+		results.push(solution.join(''));  
 		solution.pop();	
-		console.log(results)
-		// console.log(RESULT);
-
 		return results;
 	}
 }

@@ -109,9 +109,9 @@
 
  	// var sudoku = new Sudoku('070250400800000903000003070700004020100000007040500008090600000401000005007082030')
  	//  大师
- 	var sudoku = new Sudoku('000000000030104006007050032009215000100000007000900000305002800800000960071800000');   // 
-	// var sudoku = new Sudoku('000006500030000904006200003401000000000000009083000007900020000078050002012704300');
-	// var sudoku = new Sudoku('003509008080724900500001000008007000300095060060203100000008007070052000801976042')
+ 	var sudoku = new Sudoku('000000000030104006007050032009215000100000007000900000305002800800000960071800000');   // W-Wing: 2/4 in r6c1,r8c2 connected by 4 in r58c3 => r6c2<>2, Bivalue Universal Grave + 1 => r1c2<>1, r1c2<>2
+	var sudoku = new Sudoku('000006500030000904006200003401000000000000009083000007900020000078050002012704300'); // 2-String Kite: 6 in r4c9,r8c4 (connected by r8c7,r9c9) => r4c4<>6  X-Wing: 6 r49 c59 => r5c5<>6  Bivalue Universal Grave + 1 => r5c7<>1, r5c7<>6
+	var sudoku = new Sudoku('003509008080724900500001000008007000300095060060203100000008007070052000801976042');
 	// var sudoku = new Sudoku('900306007000807009000000035200000004480003000035009020070000910006004050320001000')	
 	// var sudoku = new Sudoku('093000400000000030645703028062000050000602080900570000058300006306940000019000000')
 	// var sudoku = new Sudoku('007030040000700000003105006000001000038409200100000508001008070700000400040350000')
@@ -324,22 +324,7 @@
 					change += sudoku.hideOneCol(i);
 					change += sudoku.hideOneBlk(i);
 				} 
-			} while (change>0);
-			// for( var i=0;i<9;i++) {
-			// 	change += sudoku.nakeddPairRow(i);
-			// 	change += sudoku.nakeddPairCol(i);
-			// 	change += sudoku.nakeddPairBlk(i);
-			// }
-			// for( var i=0;i<9;i++) {
-			// 	change += sudoku.nakedThreeRow(i);
-			// 	change += sudoku.nakedThreeCol(i);
-			// 	change += sudoku.nakedThreeBlk(i);
-			// }
-			// for( var i=0;i<9;i++) {
-			// 	change += sudoku.hidePairRow(i);
-			// 	change += sudoku.hidePairCol(i);
-			// 	change += sudoku.hidePairBlk(i);
-			// }		
+			} while (change>0);	
 
 			nakedOneClear();	
 
@@ -384,8 +369,8 @@
 	function nakedTripletClear(e) {
 		for( var i=0;i<9;i++) {
 			change += sudoku.naked3Blk(i);
-			change += sudoku.nakedPairCol(i);
-			change += sudoku.nakedPairBlk(i);
+			change += sudoku.naked3Col(i);
+			change += sudoku.naked3Blk(i);
 		}	
 	}
 		
