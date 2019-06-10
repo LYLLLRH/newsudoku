@@ -607,16 +607,11 @@ Sudoku.prototype.lcBlk_col = function (blk) { //lc = locked candidates
 			}
 		}
 		if (match==1) {
-			// if (blk == 8) {
-			// 	console.log('celllist:'+ celllist);
-			// 	console.log('freenum:'+freenums[i]);
-			// 	console.log('rows'+rows+':'+col);
-			// 	// console.log('');
-			// }
+
 			for (j=0;j<9;j++) {  // j 用来遍历row
 
 				if (rows.indexOf(j)<0 && this.cells[j][col].length>1 && this.cells[j][col].indexOf(freenums[i])>=0) {
-					if (j==3) console.log('this.cell:'+this.cells[j][col]);					
+					if (blk==4) console.log('this.cell:'+this.cells[j][col]);					
 					change++;
 					this.cells[j][col]=this.cells[j][col].replace(freenums[i],'')	
 					if (this.cells[j][col].length==1) {
@@ -645,41 +640,53 @@ Sudoku.prototype.lcBlk_col = function (blk) { //lc = locked candidates
 }
 
 // 在一个Block中的，某个数字指示存在一行中，那在这一行的其他的2个Block中，这是数字不是一个解
-Sudoku.prototype.lcBlk_row = function (block) { //lc = locked candidates 
-	// 检查这个Number是仅仅存在于这个Block的这行中
-	var cols=[],num,change=0,match=0;
-	for (num=1;num<10;num++) {  // 加让这个数字是否只存在这一列中
-		if (isResolveinBlk(this.cells,block,num)) {
-			continue;			
-		}
-		var celllist = getPosbyNum(this.cells,block,num)
-		if (celllist.length>1) {
-			var row = celllist[0][0];
-			for (var i=1;i<celllist.length;i++) {
-				if (row!=celllist[i][0]) {
-					match = 0;
-					break;
-				}
+Sudoku.prototype.lcBlk_row = function (blk) { //lc = locked candidates 
+	// 检查这个Number是仅仅存在于这个Block的这列中
+	var num,match,change=0;
+	var freenums = getFreeNumBlk(this.cells,blk);
+	if (freenums.length<2) return 0;
+	for (var i=0;i<freenums.length;i++) {
+		var celllist = getPosbyNum(this.cells,blk,freenums[i]);
+		var row = celllist[0][0],cols=[celllist[0][1]];
+		for (var j=1;j<celllist.length;j++) {
+			if (row!=celllist[j][0]) {
+				match=0;
+				break;
+			} else {
 				match=1;
+				cols.push(celllist[j][1]); 
 			}
-			if (match==1) {
-				cols = clearNum_inrow(this.cells,(block+1)%3+3*parseInt(block/3),row,num);
-				cols.concat(clearNum_inrow(this.cells,(block+2)%3+3*parseInt(block/3),row,num));
-				for (var l=0;l<cols.length;l++) {
-					this.solution.push({
-	 					cellsStr: cells2Str(this.cells),
-	 					method: 'Remove num in row by a unique number in block',
-	 					col: cols[l],
-	 					row: row,
-	 					num: num }
-	 					)
-				change += 1;
-				}										
-			}
-
 		}
+		if (match==1) {
 
+			for (j=0;j<9;j++) {  // j 用来遍历col
+
+				if (cols.indexOf(j)<0 && this.cells[row][j].length>1 && this.cells[row][j].indexOf(freenums[i])>=0) {
+					if (blk==4) console.log('this.cell:'+this.cells[j][col]);					
+					change++;
+					this.cells[row][j]=this.cells[row][j].replace(freenums[i],'')	
+					if (this.cells[row][j].length==1) {
+						this.solution.push({
+		 					cellsStr: cells2Str(this.cells),
+		 					method: 'Locked Candidtes Remove in Block - Row: Block-'+blk,
+		 					col: j,
+		 					row: row,
+		 					num: freenums[i] }
+		 					)					
+					} else {
+						this.solution.push({
+		 					cellsStr: cells2Str(this.cells),
+		 					method: 'Locked Candidtes in Block - Row: Block-'+blk,
+		 					col: j,
+		 					row: row,
+		 					num: freenums[i] }
+		 					)		
+					}
+				}
+			}
+		}				
 	}
+	
 	return change;
 }
 
@@ -701,13 +708,21 @@ Sudoku.prototype.lcRow = function (row) { //lc = locked candidates
 				match = 1;
 			}
 			if (match==1) { // match 代表同一个数字出现在同一个格子中，其他2个格子没有出现这个数字
-				var celllist = rmNuminBlock(this.cells,blk,row,-1,num) //-1 的是x，
+				var celllist = rmNuminBlock(this.cells,blk,row,-1,num) //-1 的是x，查找在一个Block中，有Num这个解的格子，其中x，y是指出无需查询的行和列，-1 代表需要查所有的行和列
 				for (i=0;i<celllist.length;i++) {
 					this.cells[celllist[i][0]][celllist[i][1]] = this.cells[celllist[i][0]][celllist[i][1]].replace(num,'');
 					if (this.cells[celllist[i][0]][celllist[i][1]].length==1) {
 						this.solution.push({
 		 					cellsStr: cells2Str(this.cells),
-		 					method: 'Remove num in block by a unique row number',
+		 					method: 'Locked Candidtes Remove Row: Block-'+getBlkfromPos(celllist[i][0],[celllist[i][1]]),
+		 					col: celllist[i][1],
+		 					row: celllist[i][0],
+		 					num: num+'' }
+		 					)							
+					} else {
+						this.solution.push({
+		 					cellsStr: cells2Str(this.cells),
+		 					method: 'Locked Candidtes Row: Block-'+getBlkfromPos(celllist[i][0],[celllist[i][1]]),
 		 					col: celllist[i][1],
 		 					row: celllist[i][0],
 		 					num: num+'' }
@@ -751,7 +766,15 @@ Sudoku.prototype.lcCol = function (col) { //lc = locked candidates
 					if (this.cells[celllist[i][0]][celllist[i][1]].length==1) {
 						this.solution.push({
 		 					cellsStr: cells2Str(this.cells),
-		 					method: 'Remove num in block by a unique col number',
+		 					method: 'Locked Candidtes Remove Col: Block-'+getBlkfromPos(celllist[i][0],[celllist[i][1]]),
+		 					col: celllist[i][1],
+		 					row: celllist[i][0],
+		 					num: num }
+		 					)							
+					} else {
+						this.solution.push({
+		 					cellsStr: cells2Str(this.cells),
+		 					method: 'Locked Candidtes Col: Block-'+getBlkfromPos(celllist[i][0],[celllist[i][1]]),
 		 					col: celllist[i][1],
 		 					row: celllist[i][0],
 		 					num: num }
@@ -761,9 +784,6 @@ Sudoku.prototype.lcCol = function (col) { //lc = locked candidates
 				}
 			}
 		}
-	}
-	if (this.cells[0][8]=='4589') {
-		console.log(this.cells);
 	}
 	return change;	
 }
